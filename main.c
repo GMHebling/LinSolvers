@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
     x = GradientesConjugados(&A, &b, n);    
     //imprimeMatriz(A,n,n);
     //imprimeVetor(b,n);
-    imprimeVetor(x,n);
+    //imprimeVetor(x,n);
     
     return (EXIT_SUCCESS);
 }

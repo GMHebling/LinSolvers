@@ -320,6 +320,8 @@ double *GradientesConjugados(double ***A, double **b, int n)
             p1[i] = p_new[i];
         }
         iter += 1;
+        printf("iter: %d\n", iter);
+        printf("erro: %f\n", erro);
     }
 
     result = x_atual;

@@ -204,8 +204,8 @@ double *GradientesConjugados(double ***A, double **b, int n)
     x_atual = alocaVetor(n);
     double q1 = 0.0;
     double alfa = 0.0;
-    int iter;
-    int i_max = 10;
+    int iter = 0;
+    int i_max = 100;
 
     int i, j;
     //seguindo nomenclatura da pagina 178 do NEIDE

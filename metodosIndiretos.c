@@ -190,10 +190,12 @@ double *GradientesConjugados(double ***A, double **b, int n)
     double *r0 = NULL;
     double *p1 = NULL;
     double *Ar0 = NULL;
+    double *r1 = NULL;
     Ax = alocaVetor(n);
     r0 = alocaVetor(n);
     p1 = alocaVetor(n);
     Ar0 = alocaVetor(n);
+    r1 = alocaVetor(n);
     double *x0 = NULL;
     x0 = alocaVetor(n);
     double *x_atual;
@@ -230,6 +232,16 @@ double *GradientesConjugados(double ***A, double **b, int n)
     }
     q1 = (dotProduct(&r0, &r0, n) / dotProduct(&Ar0, &r0, n));
 
+    //calculo de r1
+    for (i = 0; i < n; i++)
+    {
+        for (j = 0; j < n; j++)
+        {
+            r1[i] += (*A)[i][j] * p1[j];
+        }
+        r1[i] = r0[i] + q1 * r1[i];
+    }
+    //calculo de x_atual (v k+1)
     for (i = 0; i < n; i++)
     {
         x_atual[i] = x0[i] + q1 * p1[i];

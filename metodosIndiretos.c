@@ -191,9 +191,11 @@ double *GradientesConjugados(double ***A, double **b, int n)
     double *p1 = NULL;
     double *Ar0 = NULL;
     double *r1 = NULL;
+    double *p_new = NULL;
     Ax = alocaVetor(n);
     r0 = alocaVetor(n);
     p1 = alocaVetor(n);
+    p_new = alocaVetor(n);
     Ar0 = alocaVetor(n);
     r1 = alocaVetor(n);
     double *x0 = NULL;
@@ -201,6 +203,9 @@ double *GradientesConjugados(double ***A, double **b, int n)
     double *x_atual;
     x_atual = alocaVetor(n);
     double q1 = 0.0;
+    double alfa = 0.0;
+    int iter;
+    int i_max = 10;
 
     int i, j;
     //seguindo nomenclatura da pagina 178 do NEIDE
@@ -245,7 +250,43 @@ double *GradientesConjugados(double ***A, double **b, int n)
     for (i = 0; i < n; i++)
     {
         x_atual[i] = x0[i] + q1 * p1[i];
+        x0[i] = x_atual[i];
     }
+    while (iter < i_max)
+    {
+        //for k>2
+        alfa = (dotProduct(&r1, &r1, n) / dotProduct(&r0, &r0, n));
+        for (i = 0; i < n; i++)
+        {
+            p_new[i] = -r1[i] + alfa * p1[i];
+        }
+        //atualiza Ar0 como Ap1
+        for (i = 0; i < n; i++)
+        {
+            for (j = 0; j < n; j++)
+            {
+                Ar0[i] += (*A)[i][j] * p_new[j];
+            }
+        }
+        //q1 news
+        q1 = (dotProduct(&r1, &r1, n) / dotProduct(&Ar0, &p_new, n));
+        for (i = 0; i < n; i++)
+        {
+            x_atual[i] = x0[i] + q1 * p_new[i];
+            x0[i] = x_atual[i];
+        }
+        for (i = 0; i < n; i++)
+        {
+            r0[i] = r1[i];
+            for (j = 0; j < n; j++)
+            {
+                r1[i] += (*A)[i][j] * p_new[j];
+            }
+            r1[i] = r0[i] + q1 * r1[i];
+        }
+        iter += 1;
+    }
+
     result = x_atual;
     return (result);
 }

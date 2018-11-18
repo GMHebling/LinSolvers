@@ -205,10 +205,10 @@ double *GradientesConjugados(double ***A, double **b, int n)
     double q1 = 0.0;
     double alfa = 0.0;
     int iter = 0;
-    int i_max = 100;
+    int i_max = 5;
     double maxX0;
     double max_Atual;
-    double erro;
+    double erro = 1000;
 
     int i, j, k;
     //seguindo nomenclatura da pagina 178 do NEIDE
@@ -256,7 +256,7 @@ double *GradientesConjugados(double ***A, double **b, int n)
         r1[i] = r0[i] + q1 * r1[i];
     }
 
-    while (iter < i_max)
+    while (erro > 0.01)
     {
         //for k>2
         alfa = (dotProduct(&r1, &r1, n) / dotProduct(&r0, &r0, n));

@@ -203,9 +203,9 @@ double *GradientesConjugados(double ***A, double **b, int n)
     int i;
     //seguindo nomenclatura da pagina 178 do NEIDE
 
-    Ax = MultVetorMatriz(&A, &x0, n);
-    r0 = sumVector(&Ax, &b, n);
-    Ar0 = MultVetorMatriz(&A, &r0, n);
+    Ax = MultVetorMatriz(A, &x0, n);
+    r0 = sumVector(&Ax, b, n);
+    Ar0 = MultVetorMatriz(A, &r0, n);
     for (i=0;i<n;i++){
         p1[i] = -r0[i];
     }

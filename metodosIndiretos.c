@@ -205,7 +205,7 @@ double *GradientesConjugados(double ***A, double **b, int n)
     double q1 = 0.0;
     double alfa = 0.0;
     int iter = 0;
-    int i_max = 5;
+    int i_max = 100;
     double maxX0;
     double max_Atual;
     double erro = 1000;
@@ -256,14 +256,13 @@ double *GradientesConjugados(double ***A, double **b, int n)
         r1[i] = r0[i] + q1 * r1[i];
     }
 
-    while (erro > 0.01)
+    while (iter < i_max)
     {
         //for k>2
         alfa = (dotProduct(&r1, &r1, n) / dotProduct(&r0, &r0, n));
         for (i = 0; i < n; i++)
         {
             p_new[i] = -r1[i] + (alfa * p1[i]);
-            p1[i] = p_new[i];
         }
         //atualiza Ar0 como Ap_new
         for (i = 0; i < n; i++)
@@ -275,16 +274,14 @@ double *GradientesConjugados(double ***A, double **b, int n)
         }
         //q1 new
         q1 = (dotProduct(&r1, &r1, n) / dotProduct(&Ar0, &p_new, n));
-
+        
         for (i = 0; i < n; i++)
         {
             x_atual[i] = x0[i] + q1 * p_new[i];
-            x0[i] = x_atual[i];
         }
         double aux = 0.0;
         for (i = 0; i < n; i++)
         {
-            r0[i] = r1[i];
             for (j = 0; j < n; j++)
             {
                 aux += (*A)[i][j] * p_new[j];
@@ -307,8 +304,14 @@ double *GradientesConjugados(double ***A, double **b, int n)
             }
         }
         erro = (max_Atual - maxX0) / max_Atual;
+        for (i = 0; i < n; i++)
+        {
+            x0[i] = x_atual[i];
+            r0[i] = r1[i];
+            p1[i] = p_new[i];
+        }
     }
-    
+
     result = x_atual;
     return (result);
 }

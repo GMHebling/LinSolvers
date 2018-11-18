@@ -206,8 +206,11 @@ double *GradientesConjugados(double ***A, double **b, int n)
     double alfa = 0.0;
     int iter = 0;
     int i_max = 100;
+    double maxX0;
+    double max_Atual;
+    double erro;
 
-    int i, j;
+    int i, j, k;
     //seguindo nomenclatura da pagina 178 do NEIDE
     //Ax0
     for (i = 0; i < n; i++)
@@ -237,6 +240,12 @@ double *GradientesConjugados(double ***A, double **b, int n)
     }
     q1 = (dotProduct(&r0, &r0, n) / dotProduct(&Ar0, &r0, n));
 
+    //calculo de x_atual (v k+1)
+    for (i = 0; i < n; i++)
+    {
+        x_atual[i] = x0[i] + q1 * p1[i];
+        x0[i] = x_atual[i];
+    }
     //calculo de r1
     for (i = 0; i < n; i++)
     {
@@ -246,21 +255,17 @@ double *GradientesConjugados(double ***A, double **b, int n)
         }
         r1[i] = r0[i] + q1 * r1[i];
     }
-    //calculo de x_atual (v k+1)
-    for (i = 0; i < n; i++)
-    {
-        x_atual[i] = x0[i] + q1 * p1[i];
-        x0[i] = x_atual[i];
-    }
+
     while (iter < i_max)
     {
         //for k>2
         alfa = (dotProduct(&r1, &r1, n) / dotProduct(&r0, &r0, n));
         for (i = 0; i < n; i++)
         {
-            p_new[i] = -r1[i] + alfa * p1[i];
+            p_new[i] = -r1[i] + (alfa * p1[i]);
+            p1[i] = p_new[i];
         }
-        //atualiza Ar0 como Ap1
+        //atualiza Ar0 como Ap_new
         for (i = 0; i < n; i++)
         {
             for (j = 0; j < n; j++)
@@ -268,25 +273,42 @@ double *GradientesConjugados(double ***A, double **b, int n)
                 Ar0[i] += (*A)[i][j] * p_new[j];
             }
         }
-        //q1 news
+        //q1 new
         q1 = (dotProduct(&r1, &r1, n) / dotProduct(&Ar0, &p_new, n));
+
         for (i = 0; i < n; i++)
         {
             x_atual[i] = x0[i] + q1 * p_new[i];
             x0[i] = x_atual[i];
         }
+        double aux = 0.0;
         for (i = 0; i < n; i++)
         {
             r0[i] = r1[i];
             for (j = 0; j < n; j++)
             {
-                r1[i] += (*A)[i][j] * p_new[j];
+                aux += (*A)[i][j] * p_new[j];
             }
-            r1[i] = r0[i] + q1 * r1[i];
+            r1[i] = r0[i] + q1 * aux;
         }
         iter += 1;
+        // verifica criterio de parada
+        maxX0 = fabs(x0[0]);
+        max_Atual = fabs(x_atual[0]);
+        for (k = 0; k < n; k++)
+        {
+            if (fabs(x_atual[k]) > max_Atual)
+            {
+                max_Atual = fabs(x_atual[k]);
+            }
+            if (fabs(x0[k]) > maxX0)
+            {
+                maxX0 = fabs(x0[k]);
+            }
+        }
+        erro = (max_Atual - maxX0) / max_Atual;
     }
-
+    
     result = x_atual;
     return (result);
 }

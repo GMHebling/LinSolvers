@@ -15,6 +15,7 @@ void imprimeVetor(double *A,int m);
 double dotProduct(double **A, double **B, int n);
 double *MultVetorMatriz(double ***A, double **B, int n);
 double **MultMatriz(double ***A, double ***B, int n);
+double sumVector(double **A, double **B, int n);
 
 
 void leituraSistemaLinear(double ***A, double **b, int *n);

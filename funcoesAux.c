@@ -146,3 +146,14 @@ double **MultMatriz(double ***A, double ***B, int n)
     }
     return result;
 }
+
+double sumVector(double **A, double **B, int n){
+    int i;
+    double result;
+
+    result = 0;
+    for (i=0;i<n;i++){
+        result += (*A)[i] + (*B)[i];
+    }
+    return result;
+}

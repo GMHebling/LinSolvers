@@ -186,11 +186,16 @@ double *GradientesConjugados(double ***A, double **b, int n)
 {
     double *result;
     result = alocaVetor(n);
+    double *auxVec;
+    auxVec = alocaVetor(n);
     double *x0;
     x0 = alocaVetor(n);
     double *x_atual;
     x_atual = alocaVetor(n);
     double passo = 0.0;
+    auxVec = MultVetorMatriz(&A, &x0, n);
+    //r0
+    passo = sumVector(&auxVec, &b, n);
     return (result);
 }
 double *GradPreCondicionados(double ***A, double **b, int n)

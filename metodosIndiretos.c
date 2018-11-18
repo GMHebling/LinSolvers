@@ -209,6 +209,7 @@ double *GradientesConjugados(double ***A, double **b, int n)
     double maxX0;
     double max_Atual;
     double erro = 1000;
+    double soma;
 
     int i, j, k;
     //seguindo nomenclatura da pagina 178 do NEIDE
@@ -228,10 +229,12 @@ double *GradientesConjugados(double ***A, double **b, int n)
     //A * r0
     for (i = 0; i < n; i++)
     {
+        soma = 0;
         for (j = 0; j < n; j++)
         {
-            Ar0[i] += (*A)[i][j] * r0[j];
+            soma += (*A)[i][j] * r0[j];
         }
+        Ar0[i] = soma;
     }
 
     for (i = 0; i < n; i++)
@@ -249,11 +252,12 @@ double *GradientesConjugados(double ***A, double **b, int n)
     //calculo de r1
     for (i = 0; i < n; i++)
     {
+        soma = 0;
         for (j = 0; j < n; j++)
         {
-            r1[i] += (*A)[i][j] * p1[j];
+            soma += (*A)[i][j] * p1[j];
         }
-        r1[i] = r0[i] + q1 * r1[i];
+        r1[i] = r0[i] + (q1 * soma);
     }
 
     while (iter < i_max)
@@ -265,30 +269,34 @@ double *GradientesConjugados(double ***A, double **b, int n)
             p_new[i] = -r1[i] + (alfa * p1[i]);
         }
         //atualiza Ar0 como Ap_new
+
         for (i = 0; i < n; i++)
         {
+            soma = 0;
             for (j = 0; j < n; j++)
             {
-                Ar0[i] += (*A)[i][j] * p_new[j];
+                soma += (*A)[i][j] * p_new[j];
             }
+            Ar0[i] = soma;
         }
         //q1 new
         q1 = (dotProduct(&r1, &r1, n) / dotProduct(&Ar0, &p_new, n));
-        
+
         for (i = 0; i < n; i++)
         {
             x_atual[i] = x0[i] + q1 * p_new[i];
         }
-        double aux = 0.0;
+        
         for (i = 0; i < n; i++)
         {
+            soma = 0;
             for (j = 0; j < n; j++)
             {
-                aux += (*A)[i][j] * p_new[j];
+                soma += (*A)[i][j] * p_new[j];
             }
-            r1[i] = r0[i] + q1 * aux;
+            r1[i] = r0[i] + q1 * soma;
         }
-        iter += 1;
+        
         // verifica criterio de parada
         maxX0 = fabs(x0[0]);
         max_Atual = fabs(x_atual[0]);
@@ -304,12 +312,14 @@ double *GradientesConjugados(double ***A, double **b, int n)
             }
         }
         erro = (max_Atual - maxX0) / max_Atual;
+        //atualiza a iteracao
         for (i = 0; i < n; i++)
         {
             x0[i] = x_atual[i];
             r0[i] = r1[i];
             p1[i] = p_new[i];
         }
+        iter += 1;
     }
 
     result = x_atual;

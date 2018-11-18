@@ -74,7 +74,7 @@ void leituraSistemaLinear(double ***A, double **b, int *n)
     double valor;
     FILE *arquivo = NULL;
 
-    arquivo = fopen("sist_linear.txt", "r");
+    arquivo = fopen("/Users/gustavomh/Documents/LinSolvers/Inputs/sist_linear.txt", "r");
     if (arquivo == NULL)
     {
         printf("Arquivo não encontrado\n");

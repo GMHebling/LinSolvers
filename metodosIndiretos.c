@@ -184,7 +184,7 @@ double *GaussSeidel(double ***A, double **b, int n)
 }
 double *GradientesConjugados(double ***A, double **b, int n)
 {
-    double *result;
+    double *result = NULL;
     result = alocaVetor(n);
     double *Ax = NULL;
     double *r0 = NULL;
@@ -194,26 +194,47 @@ double *GradientesConjugados(double ***A, double **b, int n)
     r0 = alocaVetor(n);
     p1 = alocaVetor(n);
     Ar0 = alocaVetor(n);
-    double *x0;
+    double *x0 = NULL;
     x0 = alocaVetor(n);
     double *x_atual;
     x_atual = alocaVetor(n);
     double q1 = 0.0;
-    
-    int i;
-    //seguindo nomenclatura da pagina 178 do NEIDE
 
-    Ax = MultVetorMatriz(A, &x0, n);
-    r0 = sumVector(&Ax, b, n);
-    Ar0 = MultVetorMatriz(A, &r0, n);
-    for (i=0;i<n;i++){
+    int i, j;
+    //seguindo nomenclatura da pagina 178 do NEIDE
+    //Ax0
+    for (i = 0; i < n; i++)
+    {
+        for (j = 0; j < n; j++)
+        {
+            Ax[i] += (*A)[i][j] * x0[j];
+        }
+    }
+    //r0 = Ax + b
+    for (i = 0; i < n; i++)
+    {
+        r0[i] += Ax[i] + (*b)[i];
+    }
+    //A * r0
+    for (i = 0; i < n; i++)
+    {
+        for (j = 0; j < n; j++)
+        {
+            Ar0[i] += (*A)[i][j] * r0[j];
+        }
+    }
+
+    for (i = 0; i < n; i++)
+    {
         p1[i] = -r0[i];
     }
-    q1 = (dotProduct(&r0, &r0,n) / dotProduct(&Ar0, &r0, n));
+    q1 = (dotProduct(&r0, &r0, n) / dotProduct(&Ar0, &r0, n));
 
-    for (i=0;i<n;i++){
+    for (i = 0; i < n; i++)
+    {
         x_atual[i] = x0[i] + q1 * p1[i];
     }
+    result = x_atual;
     return (result);
 }
 double *GradPreCondicionados(double ***A, double **b, int n)

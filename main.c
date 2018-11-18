@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
     
     leituraSistemaLinear(&A, &b, &n);
     x = alocaVetor(n);
-    x = Jacobi(&A, &b, n);    
+    x = GradientesConjugados(&A, &b, n);    
     //imprimeMatriz(A,n,n);
     //imprimeVetor(b,n);
     imprimeVetor(x,n);

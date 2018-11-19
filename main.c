@@ -16,15 +16,20 @@
  */
 int main(int argc, char** argv) {
     double **A = NULL;
-    double *b = NULL, *x = NULL;
+    double *b = NULL; 
+    double *x = NULL;
     int n;
     
     leituraSistemaLinear(&A, &b, &n);
     x = alocaVetor(n);
-    x = GradientesConjugados(&A, &b, n);    
-    //imprimeMatriz(A,n,n);
-    //imprimeVetor(b,n);
-    //imprimeVetor(x,n);
+
+    x = GradientesConjugados(&A, &b, n);
+    //x = LUFactorization(&A, &b, n);
+    //x = Cholesky(&A, &b, n);
+    //x = Jacobi(&A, &b, n);
+    //x = GaussSeidel(&A, &b, n)    
+    
+    imprimeVetor(x,n);
     
     return (EXIT_SUCCESS);
 }

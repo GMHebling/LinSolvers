@@ -18,8 +18,10 @@ double *Jacobi(double ***A, double **b, int n)
     double *x_atual = NULL;
     x0 = alocaVetor(n);
     x_atual = alocaVetor(n);
-    double erro;
+    
+    double erro = 100;
     //double tol = 0.001;
+    
     double maxX0;
     double max_Atual;
     int iter = 0;
@@ -93,8 +95,8 @@ double *Jacobi(double ***A, double **b, int n)
         }
         iter = iter + 1;
     }
-
-    return x_atual;
+    result = x_atual;
+    return result;
 }
 
 double *GaussSeidel(double ***A, double **b, int n)
@@ -216,15 +218,17 @@ double *GradientesConjugados(double ***A, double **b, int n)
     //Ax0
     for (i = 0; i < n; i++)
     {
+        soma = 0;
         for (j = 0; j < n; j++)
         {
-            Ax[i] += (*A)[i][j] * x0[j];
+            soma += (*A)[i][j] * x0[j];
         }
+        Ax[i] = soma;
     }
     //r0 = Ax + b
     for (i = 0; i < n; i++)
     {
-        r0[i] += Ax[i] + (*b)[i];
+        r0[i] = Ax[i] + (*b)[i];
     }
     //A * r0
     for (i = 0; i < n; i++)
@@ -320,11 +324,16 @@ double *GradientesConjugados(double ***A, double **b, int n)
             p1[i] = p_new[i];
         }
         iter += 1;
-        printf("iter: %d\n", iter);
-        printf("erro: %f\n", erro);
+        
+        
     }
-
-    result = x_atual;
+    if (erro < 0.001)
+    {   
+        result = x_atual;
+    }
+    else{
+        result = x0;
+    }
     return (result);
 }
 double *GradPreCondicionados(double ***A, double **b, int n)

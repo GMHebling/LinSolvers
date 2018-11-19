@@ -207,7 +207,7 @@ double *GradientesConjugados(double ***A, double **b, int n)
     double q1 = 0.0;
     double alfa = 0.0;
     int iter = 0;
-    int i_max = 100;
+    int i_max = 50;
     double maxX0;
     double max_Atual;
     double erro = 1000;
@@ -252,6 +252,7 @@ double *GradientesConjugados(double ***A, double **b, int n)
     {
         x_atual[i] = x0[i] + q1 * p1[i];
         x0[i] = x_atual[i];
+        
     }
     //calculo de r1
     for (i = 0; i < n; i++)
@@ -268,9 +269,14 @@ double *GradientesConjugados(double ***A, double **b, int n)
     {
         //for k>2
         alfa = (dotProduct(&r1, &r1, n) / dotProduct(&r0, &r0, n));
+        //atualiza vetor r0
+        for (i=0; i<n; i++){
+            r0[i] = r1[i];
+        }
         for (i = 0; i < n; i++)
         {
             p_new[i] = -r1[i] + (alfa * p1[i]);
+            p1[i] = p_new[i];
         }
         //atualiza Ar0 como Ap_new
 
@@ -286,19 +292,16 @@ double *GradientesConjugados(double ***A, double **b, int n)
         //q1 new
         q1 = (dotProduct(&r1, &r1, n) / dotProduct(&Ar0, &p_new, n));
 
+
+        for (i = 0; i < n; i++)
+        {
+            x0[i] = x_atual[i];
+        }
+
+
         for (i = 0; i < n; i++)
         {
             x_atual[i] = x0[i] + q1 * p_new[i];
-        }
-        
-        for (i = 0; i < n; i++)
-        {
-            soma = 0;
-            for (j = 0; j < n; j++)
-            {
-                soma += (*A)[i][j] * p_new[j];
-            }
-            r1[i] = r0[i] + q1 * soma;
         }
         
         // verifica criterio de parada
@@ -316,13 +319,18 @@ double *GradientesConjugados(double ***A, double **b, int n)
             }
         }
         erro = (max_Atual - maxX0) / max_Atual;
-        //atualiza a iteracao
+        
+        //calculo de r1
         for (i = 0; i < n; i++)
         {
-            x0[i] = x_atual[i];
-            r0[i] = r1[i];
-            p1[i] = p_new[i];
+            soma = 0;
+            for (j = 0; j < n; j++)
+            {
+                soma += (*A)[i][j] * p_new[j];
+            }
+            r1[i] = r0[i] + q1 * soma;
         }
+        
         iter += 1;
         
         

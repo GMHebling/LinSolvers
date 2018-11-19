@@ -224,11 +224,8 @@ double *GradientesConjugados(double ***A, double **b, int n)
             soma += (*A)[i][j] * x0[j];
         }
         Ax[i] = soma;
-    }
-    //r0 = Ax + b
-    for (i = 0; i < n; i++)
-    {
         r0[i] = Ax[i] + (*b)[i];
+        p1[i] = -r0[i];
     }
     //A * r0
     for (i = 0; i < n; i++)
@@ -239,12 +236,9 @@ double *GradientesConjugados(double ***A, double **b, int n)
             soma += (*A)[i][j] * r0[j];
         }
         Ar0[i] = soma;
+        
     }
-
-    for (i = 0; i < n; i++)
-    {
-        p1[i] = -r0[i];
-    }
+    //calcula q1
     q1 = (dotProduct(&r0, &r0, n) / dotProduct(&Ar0, &r0, n));
 
     //calculo de x_atual (v k+1)

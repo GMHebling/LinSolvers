@@ -292,15 +292,10 @@ double *GradientesConjugados(double ***A, double **b, int n)
         //q1 new
         q1 = (dotProduct(&r1, &r1, n) / dotProduct(&Ar0, &p_new, n));
 
-
+        //atualiza vetor resultado
         for (i = 0; i < n; i++)
         {
             x0[i] = x_atual[i];
-        }
-
-
-        for (i = 0; i < n; i++)
-        {
             x_atual[i] = x0[i] + q1 * p_new[i];
         }
         

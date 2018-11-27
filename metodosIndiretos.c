@@ -207,7 +207,7 @@ double *GradientesConjugados(double ***A, double **b, int n)
     double q1 = 0.0;
     double alfa = 0.0;
     int iter = 0;
-    int i_max = 50;
+    int i_max = 100;
     double maxX0;
     double max_Atual;
     double erro = 1000;

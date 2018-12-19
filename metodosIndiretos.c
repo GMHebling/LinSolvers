@@ -335,7 +335,12 @@ double *GradientesConjugados(double ***A, double **b, int n)
 }
 double *GradPreCondicionados(double ***A, double **b, int n)
 {
+    //Seguindo algoritmo em PDF
+
+    //alocacao de memoria para os vetores
     double *result;
     result = (double *)malloc(n * sizeof(double));
+
+    
     return (result);
 }

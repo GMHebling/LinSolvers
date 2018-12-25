@@ -18,10 +18,10 @@ double *Jacobi(double ***A, double **b, int n)
     double *x_atual = NULL;
     x0 = alocaVetor(n);
     x_atual = alocaVetor(n);
-    
+
     double erro = 100;
     //double tol = 0.001;
-    
+
     double maxX0;
     double max_Atual;
     int iter = 0;
@@ -236,7 +236,6 @@ double *GradientesConjugados(double ***A, double **b, int n)
             soma += (*A)[i][j] * r0[j];
         }
         Ar0[i] = soma;
-        
     }
     //calcula q1
     q1 = (dotProduct(&r0, &r0, n) / dotProduct(&Ar0, &r0, n));
@@ -246,7 +245,6 @@ double *GradientesConjugados(double ***A, double **b, int n)
     {
         x_atual[i] = x0[i] + q1 * p1[i];
         x0[i] = x_atual[i];
-        
     }
     //calculo de r1
     for (i = 0; i < n; i++)
@@ -264,7 +262,8 @@ double *GradientesConjugados(double ***A, double **b, int n)
         //for k>2
         alfa = (dotProduct(&r1, &r1, n) / dotProduct(&r0, &r0, n));
         //atualiza vetor r0
-        for (i=0; i<n; i++){
+        for (i = 0; i < n; i++)
+        {
             r0[i] = r1[i];
         }
         for (i = 0; i < n; i++)
@@ -292,7 +291,7 @@ double *GradientesConjugados(double ***A, double **b, int n)
             x0[i] = x_atual[i];
             x_atual[i] = x0[i] + q1 * p_new[i];
         }
-        
+
         // verifica criterio de parada
         maxX0 = fabs(x0[0]);
         max_Atual = fabs(x_atual[0]);
@@ -308,7 +307,7 @@ double *GradientesConjugados(double ***A, double **b, int n)
             }
         }
         erro = (max_Atual - maxX0) / max_Atual;
-        
+
         //calculo de r1
         for (i = 0; i < n; i++)
         {
@@ -319,16 +318,15 @@ double *GradientesConjugados(double ***A, double **b, int n)
             }
             r1[i] = r0[i] + q1 * soma;
         }
-        
+
         iter += 1;
-        
-        
     }
     if (erro < 0.001)
-    {   
+    {
         result = x_atual;
     }
-    else{
+    else
+    {
         result = x0;
     }
     return (result);
@@ -338,9 +336,85 @@ double *GradPreCondicionados(double ***A, double **b, int n)
     //Seguindo algoritmo em PDF
 
     //alocacao de memoria para os vetores
+    int i, j, k;
     double *result;
-    result = (double *)malloc(n * sizeof(double));
+    result = alocaVetor(n);
 
-    
+    //chute inicial
+    double *x0 = NULL;
+    x0 = alocaVetor(n);
+    for (i = 0; i < n; i++)
+    {
+        x0[i] = 0;
+    }
+    //matrix diagonal
+    double **B;
+    B = alocaMatriz(n, n);
+    for (i = 0; i < n; i++)
+    {
+        B[i][i] = (*A)[i][i];
+    }
+    double *r0 = NULL;
+    r0 = alocaVetor(n);
+    double *r_new = NULL;
+    r_new = alocaVetor(n);
+    double *z0 = NULL;
+    z0 = alocaVetor(n);
+    double *z_new = NULL;
+    z_new = alocaVetor(n);
+    double *v0 = NULL;
+    v0 = alocaVetor(n);
+    double *v_new = NULL;
+    v_new = alocaVetor(n);
+    double *Av0 = NULL;
+    Av0 = alocaVetor(n);
+
+    double *x_new = NULL;
+    x_new = alocaVetor(n);
+
+    double alfa = 0.0;
+    double beta = 0.0;
+
+    int iter = 0;
+    int iter_max = 10;
+    double soma = 0.0;
+    while (iter <= iter_max){
+        //Avk
+        for (i=0;i<n;i++){
+            soma = 0;
+            for (j=0;j<n;j++){
+                soma += (*A)[i][j] * v0[j];
+            }
+            Av0[i] = soma;
+        }
+        //alfa k
+        alfa = dotProduct(&r0, &z0, n) / dotProduct(&Av0, &v0, n);
+        //atualiza x, r
+        for (i=0;i<n;i++){
+            x_new[i] = x0[i] + alfa * v0[i];
+            r_new[i] = r0[i] - alfa * Av0[i];
+        }
+        //atualiza z
+        for (i=0;i<n;i++){
+            soma = 0;
+            for (j=0;j<n;j++){
+                soma = B[i][j] * r_new[j];
+            }
+            z_new[i] = soma;
+        }
+        //beta
+        beta = dotProduct(&r_new, &z_new, n) / dotProduct(&r0, &z0, n);
+        //atualiza v
+        for (i=0;i<n;i++){
+            v_new[i] = z_new[i] + beta * v0[i];
+        }
+        for (i=0;i<n;i++){
+            r0[i] = r_new[i];
+            z0[i] = z_new[i];
+            v0[i] = v_new[i];
+        }
+        iter += 1;
+    }
+
     return (result);
 }

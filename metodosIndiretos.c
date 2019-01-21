@@ -376,8 +376,9 @@ double *GradPreCondicionados(double ***A, double **b, int n)
     double beta = 0.0;
 
     int iter = 0;
-    int iter_max = 10;
+    int iter_max = 20;
     double soma = 0.0;
+    //init
     for (i = 0; i < n; i++)
     {
         soma = 0;
@@ -387,7 +388,7 @@ double *GradPreCondicionados(double ***A, double **b, int n)
         }
         Av0[i] = soma;
     }
-    //init
+    
     for (i = 0; i < n; i++)
     {
         r0[i] = (*b)[i] - Av0[i];
@@ -434,6 +435,7 @@ double *GradPreCondicionados(double ***A, double **b, int n)
             r0[i] = r_new[i];
             z0[i] = z_new[i];
             v0[i] = v_new[i];
+            x0[i] = x_new[i];
         }
         for (i = 0; i < n; i++)
         {
@@ -447,5 +449,5 @@ double *GradPreCondicionados(double ***A, double **b, int n)
         iter += 1;
     }
 
-    return (result);
+    return (x_new);
 }

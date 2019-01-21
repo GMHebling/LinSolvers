@@ -23,7 +23,8 @@ int main(int argc, char** argv) {
     leituraSistemaLinear(&A, &b, &n);
     x = alocaVetor(n);
 
-    x = GradientesConjugados(&A, &b, n);
+    //x = GradientesConjugados(&A, &b, n);
+    x = GradPreCondicionados(&A, &b, n);
     //x = LUFactorization(&A, &b, n);
     //x = Cholesky(&A, &b, n);
     //x = Jacobi(&A, &b, n);

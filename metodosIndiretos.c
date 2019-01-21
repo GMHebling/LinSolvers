@@ -378,26 +378,46 @@ double *GradPreCondicionados(double ***A, double **b, int n)
     int iter = 0;
     int iter_max = 10;
     double soma = 0.0;
-    while (iter <= iter_max){
-        //Avk
-        for (i=0;i<n;i++){
-            soma = 0;
-            for (j=0;j<n;j++){
-                soma += (*A)[i][j] * v0[j];
-            }
-            Av0[i] = soma;
+    for (i = 0; i < n; i++)
+    {
+        soma = 0;
+        for (j = 0; j < n; j++)
+        {
+            soma += (*A)[i][j] * v0[j];
         }
+        Av0[i] = soma;
+    }
+    //init
+    for (i = 0; i < n; i++)
+    {
+        r0[i] = (*b)[i] - Av0[i];
+    }
+    for (i = 0; i < n; i++)
+    {
+        soma = 0;
+        for (j = 0; j < n; j++)
+        {
+            soma += B[i][j] * r0[j];
+        }
+        z0[i] = soma;
+        v0[i] = z0[i];
+    }
+    while (iter <= iter_max)
+    {
         //alfa k
         alfa = dotProduct(&r0, &z0, n) / dotProduct(&Av0, &v0, n);
         //atualiza x, r
-        for (i=0;i<n;i++){
+        for (i = 0; i < n; i++)
+        {
             x_new[i] = x0[i] + alfa * v0[i];
             r_new[i] = r0[i] - alfa * Av0[i];
         }
         //atualiza z
-        for (i=0;i<n;i++){
+        for (i = 0; i < n; i++)
+        {
             soma = 0;
-            for (j=0;j<n;j++){
+            for (j = 0; j < n; j++)
+            {
                 soma = B[i][j] * r_new[j];
             }
             z_new[i] = soma;
@@ -405,13 +425,24 @@ double *GradPreCondicionados(double ***A, double **b, int n)
         //beta
         beta = dotProduct(&r_new, &z_new, n) / dotProduct(&r0, &z0, n);
         //atualiza v
-        for (i=0;i<n;i++){
+        for (i = 0; i < n; i++)
+        {
             v_new[i] = z_new[i] + beta * v0[i];
         }
-        for (i=0;i<n;i++){
+        for (i = 0; i < n; i++)
+        {
             r0[i] = r_new[i];
             z0[i] = z_new[i];
             v0[i] = v_new[i];
+        }
+        for (i = 0; i < n; i++)
+        {
+            soma = 0;
+            for (j = 0; j < n; j++)
+            {
+                soma += (*A)[i][j] * v0[j];
+            }
+            Av0[i] = soma;
         }
         iter += 1;
     }

@@ -31,6 +31,7 @@ int main(int argc, char** argv) {
     //x = GaussSeidel(&A, &b, n)    
     
     imprimeVetor(x,n);
+    getchar();
     
     return (EXIT_SUCCESS);
 }

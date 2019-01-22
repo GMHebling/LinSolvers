@@ -187,6 +187,7 @@ double *GaussSeidel(double ***A, double **b, int n)
 double *GradientesConjugados(double ***A, double **b, int n)
 {
     double *result = NULL;
+
     result = alocaVetor(n);
     double *Ax = NULL;
     double *r0 = NULL;

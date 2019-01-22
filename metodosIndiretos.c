@@ -336,7 +336,7 @@ double *GradPreCondicionados(double ***A, double **b, int n)
     //Seguindo algoritmo em PDF
 
     //alocacao de memoria para os vetores
-    int i, j, k;
+    int i, j;
     double *result;
     result = alocaVetor(n);
 
@@ -368,6 +368,8 @@ double *GradPreCondicionados(double ***A, double **b, int n)
     v_new = alocaVetor(n);
     double *Av0 = NULL;
     Av0 = alocaVetor(n);
+    double *Ax0_aux = NULL;
+    Ax0_aux = alocaVetor(n);
 
     double *x_new = NULL;
     x_new = alocaVetor(n);
@@ -378,20 +380,24 @@ double *GradPreCondicionados(double ***A, double **b, int n)
     int iter = 0;
     int iter_max = 20;
     double soma = 0.0;
+    double soma_x0 = 0.0;
     //init
     for (i = 0; i < n; i++)
     {
-        soma = 0;
+        soma = 0.0;
+        soma_x0 = 0.0;
         for (j = 0; j < n; j++)
         {
             soma += (*A)[i][j] * v0[j];
+            soma_x0 += (*A)[i][j] * x0[j];
         }
         Av0[i] = soma;
+        Ax0_aux[i] = soma_x0;
     }
     
     for (i = 0; i < n; i++)
     {
-        r0[i] = (*b)[i] - Av0[i];
+        r0[i] = (*b)[i] - Ax0_aux[i];
     }
     for (i = 0; i < n; i++)
     {
@@ -402,16 +408,20 @@ double *GradPreCondicionados(double ***A, double **b, int n)
         }
         z0[i] = soma;
         v0[i] = z0[i];
+
     }
+    //processo iterativo
     while (iter <= iter_max)
     {
         //alfa k
         alfa = dotProduct(&r0, &z0, n) / dotProduct(&Av0, &v0, n);
+        //printf("iter: %d, alfa: %f\n", iter, alfa);
         //atualiza x, r
         for (i = 0; i < n; i++)
         {
-            x_new[i] = x0[i] + alfa * v0[i];
-            r_new[i] = r0[i] - alfa * Av0[i];
+            x_new[i] = x0[i] + (alfa * v0[i]);
+            x0[i] = x_new[i];
+            r_new[i] = r0[i] - (alfa * Av0[i]);
         }
         //atualiza z
         for (i = 0; i < n; i++)
@@ -428,14 +438,14 @@ double *GradPreCondicionados(double ***A, double **b, int n)
         //atualiza v
         for (i = 0; i < n; i++)
         {
-            v_new[i] = z_new[i] + beta * v0[i];
+            v_new[i] = z_new[i] + (beta * v0[i]);
         }
         for (i = 0; i < n; i++)
         {
             r0[i] = r_new[i];
             z0[i] = z_new[i];
             v0[i] = v_new[i];
-            x0[i] = x_new[i];
+            //x0[i] = x_new[i];
         }
         for (i = 0; i < n; i++)
         {
@@ -449,5 +459,5 @@ double *GradPreCondicionados(double ***A, double **b, int n)
         iter += 1;
     }
 
-    return (x_new);
+    return (x0);
 }

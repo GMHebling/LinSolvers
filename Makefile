@@ -1,6 +1,6 @@
 CC=gcc
-CFLAGS=-Wall
-LDFLAGS= -lm -lstdc++
+CFLAGS=-Wall -g
+LDFLAGS= -lm -lstdc++ 
 OBJFILES = main.o funcoesAux.o metodosDiretos.o metodosIndiretos.o
 TARGET = SolverLinear
 
